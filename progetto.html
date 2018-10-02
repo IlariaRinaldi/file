@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+	 <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+	<title></title>
+	<script type="text/javascript" src="script1.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	 <script src="https://apis.google.com/js/client.js?onload=init"></script>
+
+</head>
+
+<style type="text/css">
+	.col-sm-6{
+		padding-top: 3%;
+		padding-left: 3%;
+	}
+	/* Style the tab */
+	.tab {
+	    overflow: hidden;
+	    border: 1px solid #ccc;
+	    background-color: #f1f1f1;
+	}
+	/* Style the buttons inside the tab */
+	button {
+	    background-color: inherit;
+	    float: left;
+	    border: none;
+	    outline: none;
+	    cursor: pointer;
+	    padding: 14px 16px;
+	    transition: 0.3s;
+	    font-size: 17px;
+	}
+	/* Change background color of buttons on hover */
+	.tab button:hover {
+	    background-color: #ddd;
+	}
+	div.box{
+		overflow: auto;
+		width:500px ;
+    	height:200px ;
+	}
+	/* Create an active/current tablink class */
+	.tab button.active {
+	    background-color: #ccc;
+	}
+	/* Style the tab content */
+	.tabcontent {
+	    display: none;
+	    padding: 6px 12px;
+	    border: 1px solid #ccc;
+	    border-top: none;
+	    width: 100%;
+	}
+	#raccomander{
+		width: 100%;
+	}
+#description_container{
+    background-color: #F0FFF0;
+    border-top: 1px solid grey;
+    font-style: oblique;
+    padding: 2px;
+  }
+  #comment_container{
+    border-top: 1px solid grey;
+    padding: 2px;
+  }
+  img{
+     height: 150px;
+     float:left;
+     border: 10px;
+     padding: 10px;
+
+  }
+
+  .modal {
+    position:fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  }
+
+</style>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">AlphaTube's</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"					aria-expanded="false" aria-label="Toggle navigation">
+		 		 <span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		  	<ul class="navbar-nav mr-auto">
+		    	<li class="nav-item active">
+		      		<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+		        </li>
+		      	<li class="nav-item">
+		        	<a class="nav-link" id="lista" href="#myModal" data-toggle="modal" data-target="#myModal" onclick="riempi()" >Catalogo</a>
+		      	</li>
+		      	<li class="nav-item dropdown">
+		        	<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Info</a>
+		       		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+		          		<a class="dropdown-item" class="btn btn-info btn-lg" data-toggle="modal" data-target="#AboutModal">About us</a>
+		          		<a class="dropdown-item" href="#"></a>
+		          		<div class="dropdown-divider"></div>
+		          		<a class="dropdown-item" href="#">Something else here</a>
+		        	</div>
+		      	</li>
+		    </ul>
+			<form class="form-inline my-2 my-lg-0">
+		    	<input class="form-control mr-sm-2" id="query" type="search" placeholder="Search" aria-label="Search">
+		      	<button class="btn btn-outline-success my-2 my-sm-0" id="search-button">Search</button>
+
+		      	<!--<button class="btn btn-outline-success my-2 my-sm-0" id="random-button">Random</button>-->
+
+		    </form>
+		</div>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div id="player" class="col-sm-6"></div>
+			<div id="info" class="col-sm-6">
+				<div id="title_container" ></div>
+       				 <div id="description_container" class=box></div>
+       				 <div id="comment_container" class=box></div>
+
+			</div>
+		</div>
+	</div>
+	<!--Div raccomander -->
+  <div class="row">
+	<div id="raccomander">
+		<!--VARI RACCOMANDER DA SISTEMARE-->
+		<div class="tab">
+			  <button class="tablinks" onclick="caricaTab('Recent')">Recent</button>
+			  <button class="tablinks"  id="random-button">Random</button>
+			  <button class="tablinks" onclick="caricaTab('popLocAss')">Popolarity locale assoluta</button>
+			  <button class="tablinks" onclick="caricaTab('popLocRel')">Popolarity locale relativa</button>
+			  <button class="tablinks" onclick="caricaTab('popGlobAss')">Popolarity globale assoluta</button>
+			  <button class="tablinks" onclick="caricaTab('popGlobRel')">Popolarity globale relativa</button>
+			  <button class="tablinks" id="searched">Search</button>
+			<button class="tablinks" onclick="caricaTab('Related')">Related</button>
+			<button class="tablinks" id="Fvitali-button">Fvitali</button>
+			<button class="tablinks" onclick="caricaTab('ArtistSimilarity')">ArtistSimilarity</button>
+			  <button class="tablinks" onclick="caricaTab('GenreSimilarity')">GenreSimilarity</button>
+			  <button class="tablinks" onclick="caricaTab('BandSimilarity')">BandSimilarity</button>
+
+		</div>
+
+		<div id="Recent" class="tabcontent">
+		  <h3>Recent</h3>
+
+		</div>
+
+		<div id="Random" class="tabcontent">
+		  <h3>Random</h3>
+
+		</div>
+
+		<div id="popLocAss" class="tabcontent">
+		  <h3>popLocAss</h3>
+
+		</div>
+		<div id="popLocRel" class="tabcontent">
+		  <h3>popLocRel</h3>
+
+		</div>
+		<div id="popGlobAss" class="tabcontent">
+		  <h3>popGlobAss</h3>
+
+		</div>
+		<div id="popGlobRel" class="tabcontent">
+		  <h3>popGlobRel</h3>
+
+		</div>
+		<div id="search" class="tabcontent">
+		  <h3>Search</h3>
+
+		</div>
+		<div id="Related" class="tabcontent">
+		  <h3> Related </h3>
+
+		</div>
+		<div id="Fvitali" class="tabcontent">
+		  <h3>Recent</h3>
+		</div>
+
+
+		<div id="ArtistSimilarity" class="tabcontent">
+		  <h3>ArtistSimilarity</h3>
+
+		</div>
+
+		<div id="GenreSimilarity" class="tabcontent">
+		  <h3>GenreSimilarity</h3>
+
+		</div>
+
+		<div id="BandSimilarity" class="tabcontent">
+		  <h3>BandSimilarity</h3>
+
+		</div>
+
+
+
+	</div>
+
+	<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content lista catalogo-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Lista canzoni</h4>
+        </div>
+        <div class="modal-body">
+          <div id="main"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  //about us
+  <div class="modal fade" id="AboutModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" align="left">Informazioni</h4>
+        </div>
+        <div class="modal-body">
+          <p> Alphatube è un sito di raccomandazioni di Youtube </p>
+          <div>
+          <img src="Valee.jpg" class="rounded-circle" style="float:left">
+          <p>Valentina Ferraioli</p>
+          <p>
+               email: valentina.ferraioli@studio.unibo.it
+            </p>
+            </img>
+          </div>
+          <div>
+            <br>
+          <img src="IlaImmagine.jpg" class="rounded-circle" style="float:right" >
+          <br>
+          <p>Ilaria rinaldi</p>
+          <p> email: ilaria.rinaldi7@studio.unibo.it
+          </p>
+        </img>
+      </div>
+
+      <div id="chia">
+        <br>
+          <img src="chiaImmagine.jpg" class="rounded-circle" style="float:left">
+          <p>Chiara Mengoli</p>
+            <p>email: chiara.mengoli5@studio.unibo.it
+          </p>
+        </img>
+      </div>
+      <div id="luc">
+        <br>
+          <img src="lucImmagine.jpg" class="rounded-circle" style="float:right">
+          <br>
+          <br>
+          <p>Luciano Massaccesi </p>
+
+              <p> email: luciano.massaccesi@studio.unibo.it
+          </p>
+        </img>
+      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+</body>
+</html>
