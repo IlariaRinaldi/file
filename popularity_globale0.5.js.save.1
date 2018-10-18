@@ -1,0 +1,178 @@
+var MongoClient = require('mongodb').MongoClient;
+var locpop = require (__dirname+'/popularity0.5.js');
+var https = require('http');
+var url = "mongodb+srv://tecweb:OOyytUjMGXsM8o6z@tecweb-x51d4.gcp.mongodb.net?retryWrites=true";
+var gruppi=locpop.gruppi;
+var debug=false;
+var reasons=locpop.reasons;
+var period_time=50000;		//in secondi
+//locpop.reset();
+//preUpdate();
+//locpop.find_ass("globAss",200);
+//save("globAss","serverAss");
+//locpop.find_ass("serverAss",200);
+//keep_update();
+
+//updateGruppiAss(0,0,);
+//locpop.find_ass("1828",200);
+//saveAss(0);
+
+//keepUpdatingAss();
+exports.keepUpdatingAss = keepUpdatingAss;
+
+
+//Funzione che si autochiama periodicamente, ogni period_time.
+//Ogni ciclo vengono prelevati e salvati tutti i dati dagli altri gruppi (updateGruppi e updateRel)
+//e vengiene aggiornato il database, sommando i risultati ottenuti, in modo da avere i dati in una
+//forma semplice da leggere e restituire al server e quindi all'utente
+function keepUpdatingAss(){
+	if(locpop.isUpdating()){
+		setTimeout(function() {
+			if(debug) console.log("!!! is updating !!!");
+			keepUpdatingAss();
+		}, 1000);
+	}else{
+		setTimeout(function(){
+			if(debug) console.log("!!! is NOT updating !!!");
+			if(debug) console.log("in keepUpdatingAss()");
+			locpop.updateAll();
+			var prom= updateGruppi(null,0);
+			prom.then(function(){
+				var prom1= updateRel();
+				prom1.then(function(){
+					if(debug) console.log("nuovo ciclo!");
+					keepUpdatingAss();
+				});
+			});
+		},period_time*1000);
+	}
+}
+
+//
+function updateRel(){
+	if(debug) console.log("in updateRel");
+	var prom=new Promise(function(resolve,reject){
+		var prom2= locpop.findAll("vid");
+		prom2.then(function(data){
+			var prom3= updateRelRec(data,0);
+			prom3.then(function(){
+				resolve();
+			});
+		});
+	});
+	return prom;
+}
+function updateRelRec(data,i){
+	if(debug) console.log("in updateRelRec");
+	var prom=new Promise(function(resolve,reject){
+		if(i<data.length){
+			var prom2= updateGruppi(data[i].to_id,0);
+			prom2.then(function(){
+				var prom3= updateRelRec(data,i+1);
+				prom3.then(function(){
+					resolve();
+				});
+			});
+		}else{
+			resolve();
+		}
+		
+	});
+	return prom;
+}
+//fa l'update dei video relativi a from_id (ass se from_id==null)
+//i all'inizio deve essere 0
+function updateGruppi(from_id,i){
+	var prom=new Promise(function(resolve,reject){
+		if(debug) console.log("in updateGruppi("+from_id+","+i+")");
+		if(i<gruppi.length){
+			var uri;
+			if(from_id==null)
+				uri="http://site"+gruppi[i]+".tw.cs.unibo.it/globpop";
+			else
+				uri="http://site"+gruppi[i]+".tw.cs.unibo.it/globpop?id="+from_id;
+			https.get(uri, (resp) => {
+		  		var data = '';
+					  	// A chunk of data has been recieved.
+			 	resp.on('data', (chunk) => {
+			   		data += chunk;
+			 	});
+		
+				// The whole response has been received. Print out the result.
+				resp.on('end', () => {
+					try {
+						var obj=JSON.parse(data);
+						//updateGruppiAss(0,i,obj.recommended);
+						var prom1=insertData(from_id,0,i,obj.recommended);
+						prom1.then(function(){
+							prom2=updateGruppi(from_id,i+1);
+							prom2.then(function(){
+								resolve();
+							});
+						});
+						//console.log(obj.recommended);
+						if(debug) console.log("ended");
+					}catch(err) {
+						if(debug) console.log("errore collegamento ad api "+gruppi[i]+ ": "+err);
+						updateGruppi(from_id,i+1);
+						resolve();
+						
+					}
+				});
+		
+			}).on("error", (err) => {
+				updateGruppi(from_id,i+1);
+				console.log("Error: " + err.message);
+				resolve();
+			});
+		}else{
+			if(debug) console.log("updateGruppi finished!");
+			resolve();
+		}
+	});
+	return prom;
+	
+}
+//inserisce data nel database
+function insertData(from_id,i,j,data){
+//i=elemento di data che sta venendo inserito
+//j=gruppo che sta inserendo
+//se e' relativo ad un video, gli elementi di data sono stati visualizzati dopo from_id, altrimenti
+//	from_id sara' null.
+	var prom=new Promise(function(resolve,reject){
+		if(debug) console.log("in insertData() i:"+i+" j:"+j);
+		if(i<data.length){
+		
+			var id="";			
+			if(data[i].videoId!=null)
+				id=data[i].videoId;
+			else
+				if(data[i].videoID!=null)
+					id=data[i].videoID;
+			var num=data[i].timesWatched;
+			var lastWatched=0;
+			if(data[i].lastSelected!=null)
+				lastWatched=data[i].lastSelected;
+			var reason=data[i].prevalentReason;
+			reason=locpop.fixReasonName(reason);
+			if(id!=""){
+				var prom1=locpop.insert(from_id,id,num,j,lastWatched,reason);
+				prom1.then(function(){
+					var prom2=insertData(from_id,i+1,j,data);
+					prom2.then(function(){
+						resolve();
+					});
+				});
+			}else{
+				var prom2=insertData(from_id,i+1,j,data);
+				prom2.then(function(){
+					resolve();
+				});
+			}
+		}else
+			if(debug) console.log("insertData finished!");
+			resolve();
+	});
+	return prom;
+	
+}
