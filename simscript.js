@@ -363,9 +363,13 @@ function getRelated(vid,dim,info,category){
 }
 function makeid() {
             var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var possible1 = "abcdefghijklmnopqrstuvwxyz";
+            var possible2 = "0123456789";
             text = possible.charAt(Math.floor(Math.random() * possible.length));
-            return text;
+            text1 = possible1.charAt(Math.floor(Math.random() * possible.length));
+            text2 = possible2.charAt(Math.floor(Math.random() * possible.length));
+            return (text+text1+text2);
         }
 
 function getRandom(vid,dim,info,category){
@@ -386,6 +390,7 @@ function getRandom(vid,dim,info,category){
              // $('#random-button').click(caricaTab('Random'));
                console.log(response);
                dim=20;
+               var k=0;
               for (var i = 0; i < 20; i++) {
                   vid[i]=response.items[i];
               }
